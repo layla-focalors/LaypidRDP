@@ -1,15 +1,54 @@
 import java.io.*;
 import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.UnknownHostException;
 import java.text.ParseException;
-import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import org.json.simple.JSONObject;
-import java.time.LocalTime;
 import org.json.simple.parser.JSONParser;
 
-class Client {
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 
+class Client {
+    int width = Settings.GetWidth();
+    int height = Settings.GetHeight();
+    int port = Settings.GetPort();
+
+    public void ClientUI() throws IOException {
+        System.out.println("서버 IP 주소와 포트를 입력해주세요");
+        Scanner sc = new Scanner(System.in);
+        System.out.print("서버 IP : ");
+        String ip = sc.next();
+        System.out.print("서버 포트 : ");
+        int port = sc.nextInt();
+        int x = Settings.GetWidth();
+        int y = Settings.GetHeight();
+        int w = Settings.GetWidth();
+        int h = Settings.GetHeight();
+        JFrame frame = new JFrame("RDP Client By Layla-focalors");
+        frame.setBounds(x, y, w, h);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+        ServerSocket socket_s = null;
+        Socket socket = null;
+        try {
+            socket_s = new ServerSocket(port);
+            socket = socket_s.accept();
+            System.out.println("서버에 접속되었습니다.");
+            System.out.println("서버 IP : " + ip + " 서버 포트 : " + port);
+            System.out.println("연결 해상도 : " + width + "*" + height);
+            BufferedInputStream bin = new BufferedInputStream(socket.getInputStream());
+            while(true){
+                frame.getGraphics().drawImage(ImageIO.read(ImageIO.createImageInputStream(bin)), 0, 0, width, height, frame);
+            }
+        } catch (Exception e) {
+            System.out.println("서버에 접속할 수 없습니다!");
+            System.out.println("서버 IP 주소와 포트를 확인해주세요.");
+            System.out.println("접속 서버 IP : " + ip + " 접속 서버 포트 : " + port);
+        }
+    }
 }
 
 class Server {
@@ -93,6 +132,8 @@ public class app {
                 }
                 case 2 -> {
                     System.out.println("원격 데스크탑 클라이언트 실행");
+                    Client client = new Client();
+                    client.ClientUI();
                 }
                 case 3 -> {
                     boolean model = false;
