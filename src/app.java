@@ -1,21 +1,23 @@
+import java.io.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.ParseException;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import org.json.simple.JSONObject;
+import java.time.LocalTime;
 import org.json.simple.parser.JSONParser;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
 class Hive {
-    static int GetFileData(){
-        return 0;
+    static void SetupFileData() throws IOException, ParseException, org.json.simple.parser.ParseException {
+        Object Ob = new JSONParser().parse(new FileReader("./Config/Settings.json"));
+        JSONObject jo = (JSONObject) Ob;
+        Settings.SetWidth(Integer.parseInt(jo.get("width").toString()));
+        Settings.SetHeight(Integer.parseInt(jo.get("height").toString()));
+        Settings.SetPort(Integer.parseInt(jo.get("port").toString()));
     }
 //    exit 시 자동 write
-    static void WriteSettings() throws IOException, ParseException {
+    static void WriteSettings() throws IOException {
         JSONObject jo = new JSONObject();
         jo.put("width", Settings.GetWidth());
         jo.put("height", Settings.GetHeight());
@@ -54,7 +56,7 @@ class Settings {
 }
 
 public class app {
-    public static void main(String[] args) throws IOException, ParseException {
+    public static void main(String[] args) throws IOException, ParseException, org.json.simple.parser.ParseException {
         boolean isexit = false;
         do{
             System.out.println("-------- 메뉴 --------");
@@ -76,6 +78,7 @@ public class app {
                 case 3 -> {
                     boolean model = false;
                     do {
+                        Hive.SetupFileData();
                         System.out.println("------ 환경 설정 ------");
                         System.out.println("1. 해상도 설정 (현재 해상도 : " + Settings.GetWidth() + "*" + Settings.GetHeight() + ")");
                         System.out.println("2. 시스템 포트 설정 ( 경고 ) ( 현재 " + Settings.GetPort() + " 사용중 )");
