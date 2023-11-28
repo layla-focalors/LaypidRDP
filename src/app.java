@@ -19,7 +19,7 @@ import javax.swing.plaf.synth.SynthStyle;
 class Client {
     int width = Settings.GetWidth();
     int height = Settings.GetHeight();
-    int port = 1219;
+    int port = Settings.GetPort();
 
     public void ClientUI() throws IOException {
         InetAddress local;
@@ -38,7 +38,7 @@ class Client {
         ServerSocket socket_s = null;
         Socket socket = null;
         try {
-            socket_s = new ServerSocket(port);
+            socket_s = new ServerSocket(21050);
             socket = socket_s.accept();
             System.out.println("서버 IP : " + ip + " 서버 포트 : " + port);
             System.out.println("연결 해상도 : " + width + "*" + height);
@@ -61,7 +61,6 @@ class Client {
 class Server {
     int width = Settings.GetWidth();
     int height = Settings.GetHeight();
-    int port = Settings.GetPort();
 
     public void ServerUI() throws UnknownHostException {
         InetAddress local;
@@ -69,7 +68,6 @@ class Server {
         String ipd = local.getHostAddress();
         System.out.println("클라이언트를 시작합니다.");
         System.out.println("클라이언트 IP : " + ipd);
-        System.out.println("접속 포트 : " + port);
         System.out.println("연결 해상도 : " + width + "*" + height);
         System.out.println("--------------------");
         System.out.println("서버 IP 주소와 포트를 입력해주세요");
@@ -132,7 +130,7 @@ class Hive {
 class Settings {
     static int width = 1920;
     static int height = 1080;
-    static int port = 1219;
+    static int port = 1004;
 
     static int GetWidth(){
         return width;
