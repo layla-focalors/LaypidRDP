@@ -8,6 +8,26 @@ import org.json.simple.JSONObject;
 import java.time.LocalTime;
 import org.json.simple.parser.JSONParser;
 
+class Client {
+
+}
+
+class Server {
+    int width = Settings.GetWidth();
+    int height = Settings.GetHeight();
+    int port = Settings.GetPort();
+
+    public Server() throws UnknownHostException {
+        InetAddress local;
+        local = InetAddress.getLocalHost();
+        String ipd = local.getHostAddress();
+        System.out.println("서버를 시작합니다.");
+        System.out.println("서버 IP : " + ipd);
+        System.out.println("서버 포트 : " + port);
+        System.out.println("연결 해상도 : " + width + "*" + height);
+    }
+}
+
 class Hive {
     static void SetupFileData() throws IOException, ParseException, org.json.simple.parser.ParseException {
         Object Ob = new JSONParser().parse(new FileReader("./Config/Settings.json"));
