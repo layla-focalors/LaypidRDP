@@ -16,12 +16,12 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.plaf.synth.SynthStyle;
 
-class Server {
+class Client {
     int width = Settings.GetWidth();
     int height = Settings.GetHeight();
-    int port = Settings.GetPort();
+    int port = 1219;
 
-    public void ServerUI() throws IOException {
+    public void ClientUI() throws IOException {
         InetAddress local;
         local = InetAddress.getLocalHost();
         String ipd = local.getHostAddress();
@@ -30,7 +30,7 @@ class Server {
         int y = Settings.GetHeight();
         int w = Settings.GetWidth();
         int h = Settings.GetHeight();
-        JFrame frame = new JFrame("RDP Host By Layla-focalors");
+        JFrame frame = new JFrame("RDP Client By Layla-focalors");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
         frame.setBounds(0, 0, 1280, 720);
@@ -51,15 +51,19 @@ class Server {
             System.out.println("서버 IP 주소와 포트를 확인해주세요.");
             System.out.println("서버 IP : " + ip + " 접속 허용 포트 : " + port);
         }
+        finally {
+            socket.close();
+            socket_s.close();
+        }
     }
 }
 
-class Client {
+class Server {
     int width = Settings.GetWidth();
     int height = Settings.GetHeight();
     int port = Settings.GetPort();
 
-    public void ClientUI() throws UnknownHostException {
+    public void ServerUI() throws UnknownHostException {
         InetAddress local;
         local = InetAddress.getLocalHost();
         String ipd = local.getHostAddress();
@@ -75,46 +79,31 @@ class Client {
         System.out.print("서버 포트 : ");
         int port = sc.nextInt();
         JFrame frame = new JFrame("RDP Server By Layla-focalors");
-        frame.setBounds(0, 0, 1280, 720);
+        frame.setBounds(0, 0, 1920, 1080);
         frame.setLayout(null);
-
-        JTextField text = new JTextField();
-        text.setVisible(true);
-        text.setBounds(25, 15, 100, 50);
-
-        JButton button = new JButton("접속");
-        button.setVisible(true);
-        button.setBounds(125, 15, 50, 50);
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Socket socket = null;
-                try {
-                    socket = new Socket(ip, port);
-                    System.out.println("서버에 접속했습니다.");
+        Socket socket = null;
+        try {
+            socket = new Socket(ip, port);
+            System.out.println("클라이언트에 접속했습니다.");
                     BufferedImage image;
-                    System.out.println("--------------------");
-                    System.out.println("접속 해상도 : " + width + "*" + height);
-                    System.out.println("서버 IP : " + ip + " 서버 포트 : " + port);
-                    System.out.println("--------------------");
-                    Robot r = new Robot();
-                    BufferedOutputStream bout = new BufferedOutputStream(socket.getOutputStream());
-                    while(true){
-                        image = r.createScreenCapture(new Rectangle(width, height));
-                        ImageIO.write(image, "jpg", bout);
-                        bout.flush();
-                    }
-                } catch (IOException ex) {
-                    System.out.println("서버에 접속할 수 없습니다. :(");
-                    System.out.println("서버 IP 주소와 포트를 확인해주세요!");
-                } catch (AWTException ex) {
-                    System.out.println("서버에 접속할 수 없습니다. :(");
-                    System.out.println("서버 IP 주소와 포트를 확인해주세요!");
-                }
+            System.out.println("--------------------");
+            System.out.println("접속 해상도 : " + width + "*" + height);
+            System.out.println("서버 IP : " + ip + " 서버 포트 : " + port);
+            System.out.println("--------------------");
+            Robot r = new Robot();
+            BufferedOutputStream bout = new BufferedOutputStream(socket.getOutputStream());
+            while(true){
+                image = r.createScreenCapture(new Rectangle(width, height));
+                ImageIO.write(image, "jpg", bout);
+                bout.flush();
             }
-        });
-        frame.add(text);
-        frame.add(button);
+        } catch (IOException ex) {
+            System.out.println("서버에 접속할 수 없습니다. :(");
+            System.out.println("서버 IP 주소와 포트를 확인해주세요!");
+        } catch (AWTException ex) {
+            System.out.println("서버에 접속할 수 없습니다. :(");
+            System.out.println("서버 IP 주소와 포트를 확인해주세요!");
+        }
         frame.setVisible(true);
     }
 }
@@ -143,7 +132,7 @@ class Hive {
 class Settings {
     static int width = 1920;
     static int height = 1080;
-    static int port = 1004;
+    static int port = 1219;
 
     static int GetWidth(){
         return width;
