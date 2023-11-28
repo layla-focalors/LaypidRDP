@@ -1,3 +1,7 @@
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -9,34 +13,33 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
+import javax.swing.*;
+import javax.swing.plaf.synth.SynthStyle;
 
-class Client {
+class Server {
     int width = Settings.GetWidth();
     int height = Settings.GetHeight();
     int port = Settings.GetPort();
 
-    public void ClientUI() throws IOException {
-        System.out.println("서버 IP 주소와 포트를 입력해주세요");
-        Scanner sc = new Scanner(System.in);
-        System.out.print("서버 IP : ");
-        String ip = sc.next();
-        System.out.print("서버 포트 : ");
-        int port = sc.nextInt();
+    public void ServerUI() throws IOException {
+        InetAddress local;
+        local = InetAddress.getLocalHost();
+        String ipd = local.getHostAddress();
+        String ip = ipd;
         int x = Settings.GetWidth();
         int y = Settings.GetHeight();
         int w = Settings.GetWidth();
         int h = Settings.GetHeight();
-        JFrame frame = new JFrame("RDP Client By Layla-focalors");
-        frame.setBounds(x, y, w, h);
+        JFrame frame = new JFrame("RDP Host By Layla-focalors");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+        frame.setBounds(0, 0, 1280, 720);
+        frame.setLayout(null);
         ServerSocket socket_s = null;
         Socket socket = null;
         try {
             socket_s = new ServerSocket(port);
             socket = socket_s.accept();
-            System.out.println("서버에 접속되었습니다.");
             System.out.println("서버 IP : " + ip + " 서버 포트 : " + port);
             System.out.println("연결 해상도 : " + width + "*" + height);
             BufferedInputStream bin = new BufferedInputStream(socket.getInputStream());
@@ -44,26 +47,75 @@ class Client {
                 frame.getGraphics().drawImage(ImageIO.read(ImageIO.createImageInputStream(bin)), 0, 0, width, height, frame);
             }
         } catch (Exception e) {
-            System.out.println("서버에 접속할 수 없습니다!");
+            System.out.println("클라이언트와 연결할 수 없습니다!");
             System.out.println("서버 IP 주소와 포트를 확인해주세요.");
-            System.out.println("접속 서버 IP : " + ip + " 접속 서버 포트 : " + port);
+            System.out.println("서버 IP : " + ip + " 접속 허용 포트 : " + port);
         }
     }
 }
 
-class Server {
+class Client {
     int width = Settings.GetWidth();
     int height = Settings.GetHeight();
     int port = Settings.GetPort();
 
-    public Server() throws UnknownHostException {
+    public void ClientUI() throws UnknownHostException {
         InetAddress local;
         local = InetAddress.getLocalHost();
         String ipd = local.getHostAddress();
-        System.out.println("서버를 시작합니다.");
-        System.out.println("서버 IP : " + ipd);
-        System.out.println("서버 포트 : " + port);
+        System.out.println("클라이언트를 시작합니다.");
+        System.out.println("클라이언트 IP : " + ipd);
+        System.out.println("접속 포트 : " + port);
         System.out.println("연결 해상도 : " + width + "*" + height);
+        System.out.println("--------------------");
+        System.out.println("서버 IP 주소와 포트를 입력해주세요");
+        Scanner sc = new Scanner(System.in);
+        System.out.print("서버 IP : ");
+        String ip = sc.next();
+        System.out.print("서버 포트 : ");
+        int port = sc.nextInt();
+        JFrame frame = new JFrame("RDP Server By Layla-focalors");
+        frame.setBounds(0, 0, 1280, 720);
+        frame.setLayout(null);
+
+        JTextField text = new JTextField();
+        text.setVisible(true);
+        text.setBounds(25, 15, 100, 50);
+
+        JButton button = new JButton("접속");
+        button.setVisible(true);
+        button.setBounds(125, 15, 50, 50);
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Socket socket = null;
+                try {
+                    socket = new Socket(ip, port);
+                    System.out.println("서버에 접속했습니다.");
+                    BufferedImage image;
+                    System.out.println("--------------------");
+                    System.out.println("접속 해상도 : " + width + "*" + height);
+                    System.out.println("서버 IP : " + ip + " 서버 포트 : " + port);
+                    System.out.println("--------------------");
+                    Robot r = new Robot();
+                    BufferedOutputStream bout = new BufferedOutputStream(socket.getOutputStream());
+                    while(true){
+                        image = r.createScreenCapture(new Rectangle(width, height));
+                        ImageIO.write(image, "jpg", bout);
+                        bout.flush();
+                    }
+                } catch (IOException ex) {
+                    System.out.println("서버에 접속할 수 없습니다. :(");
+                    System.out.println("서버 IP 주소와 포트를 확인해주세요!");
+                } catch (AWTException ex) {
+                    System.out.println("서버에 접속할 수 없습니다. :(");
+                    System.out.println("서버 IP 주소와 포트를 확인해주세요!");
+                }
+            }
+        });
+        frame.add(text);
+        frame.add(button);
+        frame.setVisible(true);
     }
 }
 
@@ -128,10 +180,12 @@ public class app {
             int menu = sc.nextInt();
             switch(menu){
                 case 1 -> {
-                    System.out.println("원격 데스크탑 서버 실행");
+                    System.out.println("----- 원격 데스크탑 서버 실행 -----");
+                    Server server = new Server();
+                    server.ServerUI();
                 }
                 case 2 -> {
-                    System.out.println("원격 데스크탑 클라이언트 실행");
+                    System.out.println("----- 원격 데스크탑 클라이언트 실행 -----");
                     Client client = new Client();
                     client.ClientUI();
                 }
