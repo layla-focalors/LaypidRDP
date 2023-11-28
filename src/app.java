@@ -16,7 +16,6 @@ class Hive {
         Settings.SetHeight(Integer.parseInt(jo.get("height").toString()));
         Settings.SetPort(Integer.parseInt(jo.get("port").toString()));
     }
-//    exit 시 자동 write
     static void WriteSettings() throws IOException {
         JSONObject jo = new JSONObject();
         jo.put("width", Settings.GetWidth());
@@ -78,7 +77,6 @@ public class app {
                 case 3 -> {
                     boolean model = false;
                     do {
-                        Hive.SetupFileData();
                         System.out.println("------ 환경 설정 ------");
                         System.out.println("1. 해상도 설정 (현재 해상도 : " + Settings.GetWidth() + "*" + Settings.GetHeight() + ")");
                         System.out.println("2. 시스템 포트 설정 ( 경고 ) ( 현재 " + Settings.GetPort() + " 사용중 )");
@@ -107,9 +105,11 @@ public class app {
                             }
                             case 3 -> {
                                 System.out.println("프리셋 저장");
+                                Hive.WriteSettings();
                             }
                             case 4 -> {
                                 System.out.println("프리셋 불러오기");
+                                Hive.SetupFileData();
                             }
                             case 5 -> {
                                 System.out.println("환경설정 종료");
