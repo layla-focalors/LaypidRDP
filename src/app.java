@@ -92,6 +92,17 @@ public class app {
                                 int width = cian.nextInt();
                                 System.out.print("세로 : ");
                                 int height = cian.nextInt();
+                                if(width < 0 || height < 0){
+                                    System.out.println("경고! 가로 세로는 0보다 작을 수 없습니다~.");
+                                    break;
+                                }
+                                if(width > 100000 || height > 100000){
+                                    System.out.println("경고! 100,000 픽셀 이상의 경우 컴퓨터 사양에 따라 충돌, 혹은 오류가 발생할 수 있어요.");
+                                    System.out.println("계속 진행하시겠습니까? (Y/N)");
+                                    if(cian.next().equals("N")){
+                                        break;
+                                    }
+                                }
                                 Settings.SetWidth(width);
                                 Settings.SetHeight(height);
                                 System.out.println("해상도가 " + width + "*" + height + "로 변경되었습니다.");
