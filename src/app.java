@@ -1,10 +1,30 @@
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.ParseException;
 import java.util.Scanner;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 class Hive {
     static int GetFileData(){
         return 0;
+    }
+//    exit 시 자동 write
+    static void WriteSettings() throws IOException, ParseException {
+        JSONObject jo = new JSONObject();
+        jo.put("width", Settings.GetWidth());
+        jo.put("height", Settings.GetHeight());
+        jo.put("port", Settings.GetPort());
+        String json = jo.toJSONString();
+        File file = new File("./Config/Settings.json");
+        BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+        bw.write(json);
+        bw.close();
     }
 }
 
@@ -34,7 +54,7 @@ class Settings {
 }
 
 public class app {
-    public static void main(String[] args) throws UnknownHostException {
+    public static void main(String[] args) throws IOException, ParseException {
         boolean isexit = false;
         do{
             System.out.println("-------- 메뉴 --------");
@@ -90,6 +110,7 @@ public class app {
                             }
                             case 5 -> {
                                 System.out.println("환경설정 종료");
+                                Hive.WriteSettings();
                                 model = true;
                             }
                             default -> {
